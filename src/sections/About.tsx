@@ -148,22 +148,23 @@ export default function About({ lang }: AboutProps) {
             }}
           >
   
-            <img
+           <img
               src="/images/Clip.png"
               alt=""
               aria-hidden="true"
               className="about-clip"
               style={{
                 position: 'absolute',
-                width: 'clamp(36px, 5vw, 56px)',
-                top: 'clamp(-8px, -1.5vw, -12px)',
-                left: 'clamp(8px, 1.5vw, 20px)',
-                transform: 'rotate(-25deg)',
+                width: 'clamp(32px, 5vw, 56px)',
+                top: '-10px',
+                left: '10px', // DENTRO del área visible, no afuera
+                transform: 'rotate(-30deg)',
                 filter: 'drop-shadow(0 4px 8px rgba(61,43,31,0.25))',
                 pointerEvents: 'none',
-                zIndex: 5,
+                zIndex: 10,
               }}
             />
+
 
             <img
               src="/images/descarga (7).jpeg"
