@@ -22,12 +22,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.CONTACT_TO_EMAIL;
-  const fromEmail = process.env.CONTACT_FROM_EMAIL;
 
-  if (!apiKey || !toEmail || !fromEmail) {
-    res.status(500).json({
-      error: 'Missing environment variables: RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL',
-    });
+  if (!apiKey || !toEmail) {
+    res.status(500).json({ error: 'Missing RESEND_API_KEY or CONTACT_TO_EMAIL' });
     return;
   }
 
@@ -48,11 +45,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const resend = new Resend(apiKey);
     const safeName = escapeHtml(name);
-    const safeEmail = escapeHtml(email);
     const safeMessage = escapeHtml(message).replace(/\n/g, '<br/>');
 
     const sendResult = await resend.emails.send({
-      from: fromEmail,
+      from: 'Portfolio <onboarding@resend.dev>',
       to: [toEmail],
       replyTo: email,
       subject: `Nuevo mensaje portfolio - ${name}`,
@@ -60,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       html: `<div style="font-family: Georgia, serif; color: #3D2B1F; background: #F9F3ED; padding: 32px; border-radius: 12px;">
         <h2 style="color: #C4788A; margin-bottom: 20px;">💌 Nuevo mensaje desde tu portfolio</h2>
         <p><strong>Nombre:</strong> ${safeName}</p>
-        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Email:</strong> ${email}</p>
         <hr style="border: none; border-top: 1px solid rgba(61,43,31,0.15); margin: 20px 0;" />
         <p style="white-space: pre-wrap;">${safeMessage}</p>
       </div>`,
