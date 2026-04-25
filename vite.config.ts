@@ -27,6 +27,10 @@ function parseJsonBody(req: NodeJS.ReadableStream): Promise<Record<string, unkno
   })
 }
 
+function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
 function resendContactPlugin() {
   const handler = async (req: any, res: any, next: () => void) => {
     if (req.url !== '/api/contact') {
@@ -67,11 +71,18 @@ function resendContactPlugin() {
         return
       }
 
+      if (!validateEmail(email)) {
+        res.statusCode = 400
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify({ error: 'Invalid email format' }))
+        return
+      }
+
       const resend = new Resend(apiKey)
       const subject = `Nuevo mensaje portfolio - ${name}`
       const text = `Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`
 
-      await resend.emails.send({
+      const sendResult = await resend.emails.send({
         from: fromEmail,
         to: [toEmail],
         replyTo: email,
@@ -79,6 +90,13 @@ function resendContactPlugin() {
         text,
         html: `<div><p><strong>Nombre:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Mensaje:</strong></p><p>${message.replace(/\n/g, '<br/>')}</p></div>`,
       })
+
+      if (sendResult.error) {
+        res.statusCode = 500
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify({ error: sendResult.error.message }))
+        return
+      }
 
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/json')
