@@ -163,7 +163,27 @@ export default function Contact({ lang }: ContactProps) {
       gsap.to(btnRef.current, { scale: 0.9, duration: 0.1, yoyo: true, repeat: 1, ease: 'power2.inOut' });
     }
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        let apiError = t.errorMessage;
+        try {
+          const data = (await response.json()) as { error?: string };
+          if (data?.error) {
+            apiError = data.error;
+          }
+        } catch {
+          // Keep generic error if response is not JSON.
+        }
+        throw new Error(apiError);
+      }
+
       setSubmitted(true);
       launchConfetti();
       if (successRef.current) {
@@ -177,8 +197,9 @@ export default function Contact({ lang }: ContactProps) {
         setSubmitted(false);
         setFormData({ name: '', email: '', message: '' });
       }, 4000);
-    } catch {
-      setErrorMessage(t.errorMessage);
+    } catch (error) {
+      const message = error instanceof Error && error.message ? error.message : t.errorMessage;
+      setErrorMessage(message);
       if (formRef.current) {
         const tl = gsap.timeline();
         tl.to(formRef.current, { x: -10, duration: 0.05 })
@@ -446,20 +467,17 @@ export default function Contact({ lang }: ContactProps) {
 
             {/* ===== COLUMNA DERECHA: FORMULARIO ===== */}
             <div style={{ position: 'relative' }}>
-              {/* MENSAJE DE ÉXITO */}
-              {submitted && (
+              {submitted ? (
                 <div
                   ref={successRef}
                   style={{
-                    position: 'absolute',
-                    inset: 0,
                     background: '#FDF8F0',
                     borderRadius: '18px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 50,
+                    minHeight: '420px',
                     padding: '24px',
                     border: '2px dashed rgba(61, 43, 31, 0.1)',
                   }}
@@ -490,8 +508,7 @@ export default function Contact({ lang }: ContactProps) {
                     className="animate-stamp"
                   />
                 </div>
-              )}
-
+              ) : (
               <form ref={formRef} onSubmit={handleSubmit} style={{ position: 'relative' }}>
                 {/* NOMBRE + EMAIL */}
                 <div
@@ -707,6 +724,7 @@ export default function Contact({ lang }: ContactProps) {
                   </button>
                 </div>
               </form>
+              )}
             </div>
           </div>
 
