@@ -3,84 +3,116 @@ export default function HeroCover() {
     <div
       style={{
         width: '100%',
-        maxWidth: '1500px',
+        maxWidth: '800px',
         margin: '0 auto',
-        borderRadius: '22px',
-        overflow: 'hidden',
-        boxShadow: '0 25px 80px rgba(61, 43, 31, 0.24)',
-        border: '1px solid rgba(255,255,255,0.45)',
-        background: 'linear-gradient(135deg, #C4A4A8 0%, #B8929A 30%, #A67C85 60%, #8B6B73 100%)',
         position: 'relative',
       }}
     >
+      {/* Washi tape superior */}
       <div
+        className="washi-tape washi-tape-pink"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'clamp(20px, 4vw, 60px)',
-          padding: 'clamp(30px, 6vw, 80px) clamp(20px, 4vw, 60px)',
-          minHeight: 'clamp(150px, 25vw, 300px)',
+          top: '-12px',
+          left: '50%',
+          transform: 'translateX(-50%) rotate(-3deg)',
+          zIndex: 10,
         }}
-      >
-        {/* MARIPOSA del favicon */}
-        <img
-          src="/images/MG-Favicon.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            width: 'clamp(60px, 12vw, 140px)',
-            height: 'auto',
-            filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
-            flexShrink: 0,
-          }}
-        />
+      />
 
-        {/* Separador curvo */}
+      {/* Polaroid principal */}
+      <div
+        className="polaroid"
+        style={{
+          '--rotation': '-2deg',
+          background: 'var(--polaroid)',
+          padding: 'clamp(12px, 2vw, 24px)',
+          paddingBottom: 'clamp(32px, 5vw, 64px)',
+          boxShadow: '0 8px 32px rgba(61, 43, 31, 0.2), 0 2px 8px rgba(61, 43, 31, 0.15)',
+          borderRadius: '4px',
+          position: 'relative',
+        } as React.CSSProperties}
+      >
+        {/* Contenido del polaroid */}
         <div
           style={{
-            width: '2px',
-            height: 'clamp(60px, 10vw, 120px)',
-            background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.4) 20%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 80%, transparent 100%)',
-            borderRadius: '1px',
-            flexShrink: 0,
+            background: 'linear-gradient(135deg, #C4A4A8 0%, #B8929A 30%, #A67C85 60%, #8B6B73 100%)',
+            borderRadius: '2px',
+            padding: 'clamp(30px, 6vw, 60px) clamp(20px, 4vw, 40px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 'clamp(16px, 3vw, 40px)',
+            minHeight: 'clamp(120px, 20vw, 200px)',
           }}
-        />
+        >
+          <img
+            src="/MG-Favicon.png"
+            alt=""
+            aria-hidden="true"
+            style={{
+              width: 'clamp(50px, 10vw, 100px)',
+              height: 'auto',
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))',
+              flexShrink: 0,
+            }}
+          />
+          {/* Mariposa */}
 
-        {/* Texto */}
-        <div style={{ textAlign: 'left' }}>
-          <p
-            className="font-body"
+          {/* Separador */}
+          <div
             style={{
-              fontSize: 'clamp(16px, 3vw, 32px)',
-              fontWeight: 400,
-              color: 'white',
-              margin: 0,
-              lineHeight: 1.3,
-              letterSpacing: '1px',
-              fontFamily: "'Playfair Display', 'Georgia', serif",
-              textShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              width: '1px',
+              height: 'clamp(50px, 8vw, 100px)',
+              background: 'linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.5) 20%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.5) 80%, transparent 100%)',
             }}
-          >
-            Maria Sol Goldenberg
-          </p>
-          <p
-            className="font-body"
-            style={{
-              fontSize: 'clamp(12px, 2vw, 20px)',
-              fontWeight: 300,
-              color: 'rgba(255,255,255,0.9)',
-              margin: 'clamp(4px, 1vw, 8px) 0 0 0',
-              lineHeight: 1.3,
-              letterSpacing: '2px',
-              fontFamily: "'Inter', sans-serif",
-              textTransform: 'uppercase',
-            }}
-          >
-            Licenciada en Marketing
-          </p>
+          />
+
+          {/* Texto */}
+          <div style={{ textAlign: 'left' }}>
+            <p
+              style={{
+                fontSize: 'clamp(14px, 2.5vw, 24px)',
+                fontWeight: 400,
+                color: 'white',
+                margin: 0,
+                lineHeight: 1.3,
+                letterSpacing: '1px',
+                fontFamily: "'Playfair Display', 'Georgia', serif",
+                textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              }}
+            >
+              Maria Sol Goldenberg
+            </p>
+            <p
+              style={{
+                fontSize: 'clamp(10px, 1.5vw, 16px)',
+                fontWeight: 300,
+                color: 'rgba(255,255,255,0.9)',
+                margin: '6px 0 0 0',
+                lineHeight: 1.3,
+                letterSpacing: '3px',
+                fontFamily: "'Inter', sans-serif",
+                textTransform: 'uppercase',
+              }}
+            >
+              Licenciada en Marketing
+            </p>
+          </div>
         </div>
+
+        {/* Espacio polaroid inferior (blanco) */}
       </div>
+
+      {/* Washi tape inferior decorativa */}
+      <div
+        className="washi-tape washi-tape-blue"
+        style={{
+          bottom: '20px',
+          right: '-10px',
+          transform: 'rotate(12deg)',
+          zIndex: 10,
+        }}
+      />
     </div>
   );
 }
