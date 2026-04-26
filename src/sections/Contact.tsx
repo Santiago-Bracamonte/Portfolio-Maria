@@ -165,9 +165,7 @@ export default function Contact({ lang }: ContactProps) {
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
@@ -175,12 +173,8 @@ export default function Contact({ lang }: ContactProps) {
         let apiError = t.errorMessage;
         try {
           const data = (await response.json()) as { error?: string };
-          if (data?.error) {
-            apiError = data.error;
-          }
-        } catch {
-          // Keep generic error if response is not JSON.
-        }
+          if (data?.error) apiError = data.error;
+        } catch { /* keep generic */ }
         throw new Error(apiError);
       }
 
@@ -240,7 +234,7 @@ export default function Contact({ lang }: ContactProps) {
 
       {/* ===== POST-IT CON EMAIL ===== */}
       <div
-        className="post-it font-handwritten"
+        className="post-it font-handwritten contact-postit"
         style={{
           position: 'absolute',
           top: 'clamp(20px, 3vw, 40px)',
@@ -264,7 +258,7 @@ export default function Contact({ lang }: ContactProps) {
         {/* ===== TÍTULO ===== */}
         <h2
           ref={titleRef}
-          className="font-display"
+          className="font-display contact-title"
           style={{
             fontSize: 'clamp(42px, 7.5vw, 88px)',
             fontWeight: 700,
@@ -301,43 +295,7 @@ export default function Contact({ lang }: ContactProps) {
           ref={envelopeRef}
           style={{ position: 'relative', margin: '0 auto', maxWidth: '1040px' }}
         >
-          {/* PINZA */}
-          <img
-            src="/images/clothespin.png"
-            alt=""
-            aria-hidden="true"
-            className="animate-wiggle"
-            style={{
-              position: 'absolute',
-              top: 'clamp(-45px, -5vw, -55px)',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 'clamp(50px, 7vw, 75px)',
-              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))',
-              pointerEvents: 'none',
-              zIndex: 20,
-            }}
-          />
-
-          {/* SOBRE FLOTANTE */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 'clamp(-58px, -7vw, -90px)',
-              right: 'clamp(-8px, -1vw, -24px)',
-              width: 'clamp(84px, 10vw, 128px)',
-              zIndex: 5,
-              pointerEvents: 'none',
-            }}
-          >
-            <img
-              src="/images/envelope.png"
-              alt=""
-              aria-hidden="true"
-              className="animate-float-slow"
-              style={{ width: '100%', filter: 'drop-shadow(3px 5px 10px rgba(0,0,0,0.15))' }}
-            />
-          </div>
+          
 
           {/* WASHI TAPE */}
           <div
@@ -351,8 +309,9 @@ export default function Contact({ lang }: ContactProps) {
             }}
           />
 
-          {/* ===== TARJETA PRINCIPAL: SIN GRADIENTES ===== */}
+          {/* ===== TARJETA PRINCIPAL ===== */}
           <div
+            className="contact-card"
             style={{
               background: '#FDF8F0',
               borderRadius: '24px',
@@ -375,6 +334,7 @@ export default function Contact({ lang }: ContactProps) {
 
             {/* ===== COLUMNA IZQUIERDA: CTA ===== */}
             <div
+              className="contact-cta-col"
               style={{
                 borderRadius: '18px',
                 background: '#FFF5F7',
@@ -388,6 +348,7 @@ export default function Contact({ lang }: ContactProps) {
             >
               {/* SELLO DECORATIVO */}
               <div
+                className="contact-seal"
                 style={{
                   position: 'absolute',
                   top: '-12px',
@@ -403,7 +364,7 @@ export default function Contact({ lang }: ContactProps) {
                   transform: 'rotate(12deg)',
                 }}
               >
-                <span style={{ fontSize: 'clamp(18px, 2.2vw, 26px)', filter: 'brightness(0) invert(1)' }}>💌</span>
+                <span style={{ fontSize: 'clamp(18px, 2.2vw, 26px)' }}>📩</span>
               </div>
 
               <p
@@ -466,10 +427,11 @@ export default function Contact({ lang }: ContactProps) {
             </div>
 
             {/* ===== COLUMNA DERECHA: FORMULARIO ===== */}
-            <div style={{ position: 'relative' }}>
+            <div className="contact-form-col" style={{ position: 'relative' }}>
               {submitted ? (
                 <div
                   ref={successRef}
+                  className="contact-success"
                   style={{
                     background: '#FDF8F0',
                     borderRadius: '18px',
@@ -670,7 +632,7 @@ export default function Contact({ lang }: ContactProps) {
                   </div>
                 )}
 
-                {/* ===== BOTÓN DE ENVÍO: ALTO CONTRASTE ===== */}
+                {/* ===== BOTÓN DE ENVÍO ===== */}
                 <div className="form-field" style={{ textAlign: 'center', position: 'relative' }}>
                   <button
                     ref={btnRef}
@@ -745,15 +707,56 @@ export default function Contact({ lang }: ContactProps) {
         </div>
       </div>
 
-      {/* ===== CSS ADICIONAL ===== */}
+      {/* ===== CSS RESPONSIVE ===== */}
       <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        @media (max-width: 900px) {
-          #contact > div > div > div:nth-of-type(3) {
+
+        /* MOBILE: hasta 768px */
+        @media (max-width: 768px) {
+          .contact-postit {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            left: auto !important;
+            margin: 0 auto 20px !important;
+            width: fit-content !important;
+            transform: rotate(-1deg) !important;
+          }
+          .contact-title {
+            margin-top: 8px !important;
+          }
+          .contact-clothespin,
+          .contact-envelope-float {
+            display: none !important;
+          }
+          .contact-card {
             grid-template-columns: 1fr !important;
+            padding: 20px 16px !important;
+          }
+          .contact-cta-col {
+            order: -1;
+          }
+          .contact-seal {
+            top: -10px !important;
+            right: -6px !important;
+            width: 40px !important;
+            height: 40px !important;
+          }
+          .contact-seal span {
+            font-size: 18px !important;
+          }
+          .contact-success {
+            min-height: 300px !important;
+          }
+        }
+
+        /* TABLET: 769px - 1024px */
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .contact-card {
+            grid-template-columns: 1fr 1fr !important;
           }
         }
       `}</style>
