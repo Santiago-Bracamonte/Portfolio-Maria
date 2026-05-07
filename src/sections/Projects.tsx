@@ -32,11 +32,11 @@ const projects = {
       tags: 'Stories, Motion, Branding',
       image: '/images/ProyectoMaru1.png',
       stories: [
-        { id: 'maru-1', title: 'ProyectoMaru1', image: '/images/ProyectoMaru1.png' },
-        { id: 'maru-2', title: 'ProyectoMaru2', image: '/images/ProyectoMaru2.png' },
-        { id: 'maru-3', title: 'ProyectoMaru3', image: '/images/ProyectoMaru3.png' },
-        { id: 'maru-4', title: 'ProyectoMaru4', image: '/images/ProyectoMaru4.png' },
-        { id: 'maru-5', title: 'ProyectoMaru5', image: '/images/ProyectoMaru5.png' },
+        { id: 'maru-1', title: 'Blaze And Fire', image: '/images/ProyectoMaru1.png' },
+        { id: 'maru-2', title: 'Blaze And Fire', image: '/images/ProyectoMaru2.png' },
+        { id: 'maru-3', title: 'Blaze And Fire', image: '/images/ProyectoMaru3.png' },
+        { id: 'maru-4', title: 'Blaze And Fire', image: '/images/ProyectoMaru4.png' },
+        { id: 'maru-5', title: 'Blaze And Fire', image: '/images/ProyectoMaru5.png' },
       ],
       featured: true,
     },
@@ -46,9 +46,18 @@ const projects = {
       tags: 'Video, Social, Lookbook',
       image: '/images/ProyectoMaru2.png',
       videoPlaylist: [
+        '/images/Blaze and Fire Eyeshado (1) (1).mp4',
+      ],
+      featured: true,
+    },
+    {
+      id: 'patisserie-video',
+      title: 'Proyecto Patisserie',
+      tags: 'Video, Social, Reels',
+      image: '/images/ProyectoMaru2.png',
+      videoPlaylist: [
         '/images/PatisserieVideo.mp4',
         '/images/Proyecto Patisserie.mp4',
-        '/images/Blaze and Fire Eyeshado (1) (1).mp4',
       ],
       featured: true,
     },
@@ -74,8 +83,17 @@ const projects = {
       tags: 'Video, Social, Lookbook',
       image: '/images/ProyectoMaru2.png',
       videoPlaylist: [
-        '/images/PatisserieVideo.mp4',
         '/images/Blaze and Fire Eyeshado (1) (1).mp4',
+      ],
+      featured: true,
+    },
+    {
+      id: 'patisserie-video',
+      title: 'Patisserie Project',
+      tags: 'Video, Social, Reels',
+      image: '/images/ProyectoMaru2.png',
+      videoPlaylist: [
+        '/images/PatisserieVideo.mp4',
         '/images/Proyecto Patisserie.mp4',
       ],
       featured: true,
@@ -90,7 +108,6 @@ export default function Projects({ lang }: ProjectsProps) {
   const cardsRef = useRef<(HTMLElement | null)[]>([]);
   const [storyIndices, setStoryIndices] = useState<Record<string, number>>({});
   const [videoIndices, setVideoIndices] = useState<Record<string, number>>({});
-  const [videoReady, setVideoReady] = useState<Record<string, boolean>>({});
   const instagramAvatar = '/images/MaruFOTO.jpeg';
   const instagramUser = 'maru';
 
@@ -121,32 +138,17 @@ export default function Projects({ lang }: ProjectsProps) {
   useEffect(() => {
     const nextStoryIndices: Record<string, number> = {};
     const nextVideoIndices: Record<string, number> = {};
-    const nextVideoReady: Record<string, boolean> = {};
     currentProjects.forEach((project) => {
       if (project.stories?.length) {
         nextStoryIndices[project.id] = 0;
       }
       if (project.videoPlaylist?.length) {
         nextVideoIndices[project.id] = 0;
-        nextVideoReady[project.id] = false;
       }
     });
     setStoryIndices(nextStoryIndices);
     setVideoIndices(nextVideoIndices);
-    setVideoReady(nextVideoReady);
   }, [currentProjects]);
-
-  useEffect(() => {
-    setVideoReady((prev) => {
-      const next = { ...prev };
-      currentProjects.forEach((project) => {
-        if (project.videoPlaylist?.length) {
-          next[project.id] = false;
-        }
-      });
-      return next;
-    });
-  }, [videoIndices, currentProjects]);
 
   useEffect(() => {
     const storyTimers = currentProjects
@@ -160,20 +162,8 @@ export default function Projects({ lang }: ProjectsProps) {
         });
       }, 5000));
 
-    const videoTimers = currentProjects
-      .filter((project) => project.videoPlaylist?.length)
-      .map((project) => setInterval(() => {
-        setVideoIndices((prev) => {
-          const total = project.videoPlaylist?.length ?? 0;
-          if (!total) return prev;
-          const current = prev[project.id] ?? 0;
-          return { ...prev, [project.id]: (current + 1) % total };
-        });
-      }, 5000));
-
     return () => {
       storyTimers.forEach((timer) => clearInterval(timer));
-      videoTimers.forEach((timer) => clearInterval(timer));
     };
   }, [currentProjects]);
 
@@ -336,9 +326,9 @@ export default function Projects({ lang }: ProjectsProps) {
       : project.video;
     const hasStories = Boolean(project.stories?.length);
     const hasVideo = Boolean(activeVideo);
-    const isVideoReady = videoReady[project.id] ?? false;
     const currentStoryIndex = storyIndices[project.id] ?? 0;
     const totalStories = project.stories?.length ?? 0;
+    const isSingleVideo = !project.videoPlaylist || project.videoPlaylist.length <= 1;
 
     const phoneContent = (
       <div
@@ -503,7 +493,7 @@ export default function Projects({ lang }: ProjectsProps) {
                 <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '1px' }}>Reels</span>
               </div>
 
-              {/* Contenedor del video con margen */}
+              {/* Contenedor del video */}
               <div style={{
                 width: '100%',
                 height: '100%',
@@ -513,15 +503,20 @@ export default function Projects({ lang }: ProjectsProps) {
                 background: '#0a0a0a',
               }}>
                 <video
+                  key={activeVideo}
                   src={activeVideo}
                   autoPlay
-                  loop
                   muted
                   playsInline
                   preload="auto"
-                  poster={project.image}
-                  onLoadedData={() => {
-                    setVideoReady((prev) => ({ ...prev, [project.id]: true }));
+                  onEnded={(e) => {
+                    if (isSingleVideo) {
+                      const vid = e.currentTarget;
+                      vid.currentTime = 0;
+                      vid.play();
+                    } else {
+                      handleVideoAdvance(project.id, 'next');
+                    }
                   }}
                   style={{
                     width: '100%',
@@ -531,18 +526,10 @@ export default function Projects({ lang }: ProjectsProps) {
                     background: '#0a0a0a',
                   }}
                 />
-                {!isVideoReady && (
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: `url(${project.image}) center/contain no-repeat #0a0a0a`,
-                    zIndex: 5,
-                  }} />
-                )}
               </div>
 
               {/* Zonas táctiles para navegación */}
-              {project.videoPlaylist?.length && project.videoPlaylist.length > 1 ? (
+              {project.videoPlaylist && project.videoPlaylist.length > 1 ? (
                 <>
                   <div
                     style={{
